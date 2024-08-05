@@ -1,0 +1,23 @@
+#!/usr/bin/dash
+
+xset r rate 350 40
+xset m 5/1 10
+
+setxkbmap -layout us -option -option esperanto:qwerty -option compose:rctrl,lv3:ralt_switch
+# setxkbmap -layout dvorak -option -option esperanto:dvorak -option compose:menu,lv3:ralt_switch
+
+# TODO: find touchpad name on new system
+id="$(xinput --list --id-only 'Elan Touchpad')"
+
+xinput set-prop $id 'libinput Disable While Typing Enabled' 0
+xinput set-prop $id 'libinput Horizontal Scroll Enabled' 1
+xinput set-prop $id 'libinput Tapping Enabled' 1
+xinput set-prop $id 'libinput Accel Speed' '0.55'
+
+# https://shallowsky.com/blog/tags/xmodmap/
+xmodmap -e "keysym F1 = Pointer_Button1 Pointer_Button1 Pointer_Button1 Pointer_Button1"
+xmodmap -e "keysym F2 = Pointer_Button2 Pointer_Button2 Pointer_Button2 Pointer_Button2"
+xmodmap -e "keysym F3 = Pointer_Button3 Pointer_Button3 Pointer_Button3 Pointer_Button3"
+xkbset m
+xkbset exp '=m'
+

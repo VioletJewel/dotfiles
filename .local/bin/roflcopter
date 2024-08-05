@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+"""
+roflcopter by Vi. Happy holidays. :-)
+"""
+(lambda LOL:exit(0) if LOL else None)(__name__!="__main__");from time import sleep as LOL;from sys import stdout as P;P.TER=P.write;LOLOL=P.flush
+R,OO,F,L,C,O=P.TER,LOLOL,.15,"\x1b[?1049h\x1b[?25l\x1b[H\n         _^___\n      __/   [] \\\n O ===__        \\\n        \\________]\n         I   I\n        --------/\x1b[6F"," ROFL:ROFL:         \x1b[2E L\x1b[E O \x1b[E L","          :ROFL:ROFL\x1b[2E  \x1b[ELOL\x1b[E  "
+def roflcopter(r):
+ try:
+  while roflcopter:r,o,f,l=(-(r*2-1)+1)//2,R([C,O][r]+"\x1b[4F"),OO(),LOL(F)
+ except:roflcopter
+ finally:r,o,f,l=C,O,P.TER("\x1b[?1049l\x1b[?25h"),LOL
+(lambda LOL:roflcopter(LOL))((lambda _:0)((R,O,F,L,C,O,P.TER(L))))

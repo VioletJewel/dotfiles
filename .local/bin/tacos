@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from random import randint
+from subprocess import Popen, PIPE
+from sys import stdout
+from time import sleep
+
+if __name__ == '__main__':
+    s = 'TACOS'
+    p = Popen(['tput', 'cols'], stdout=PIPE)
+    w = int(p.communicate()[0].decode('utf-8'))
+    p = Popen(['tput', 'lines'], stdout=PIPE)
+    h = int(p.communicate()[0].decode('utf-8'))
+    w -= len(s) - 1
+    try:
+        while True:
+            stdout.write('\x1b[{};{}H\x1b[3{}m{}\x1b[0m\x1b[1;1H'.format(randint(1, h), randint( 1, w), randint(1, 7), s))
+            stdout.flush()
+            sleep(0.0001)
+    except KeyboardInterrupt:
+        stdout.write('\x1bc\x1b[1;1H')

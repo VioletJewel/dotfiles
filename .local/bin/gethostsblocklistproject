@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# from https://github.com/blocklistproject/Lists
+
+curl -s https://blocklistproject.github.io/Lists/abuse.txt > /etc/hosts.d/08-hosts.blocklistproject-abuse&
+curl -s https://blocklistproject.github.io/Lists/ads.txt > /etc/hosts.d/09-hosts.blocklistproject-ads&
+curl -s https://blocklistproject.github.io/Lists/crypto.txt > /etc/hosts.d/10-hosts.blocklistproject-crypto&
+curl -s https://blocklistproject.github.io/Lists/drugs.txt > /etc/hosts.d/11-hosts.blocklistproject-drugs&
+curl -s https://blocklistproject.github.io/Lists/everything.txt > /etc/hosts.d/12-hosts.blocklistproject-everything&
+curl -s https://blocklistproject.github.io/Lists/facebook.txt > /etc/hosts.d/13-hosts.blocklistproject-facebook&
+curl -s https://blocklistproject.github.io/Lists/fraud.txt > /etc/hosts.d/14-hosts.blocklistproject-fraud&
+curl -s https://blocklistproject.github.io/Lists/gambling.txt > /etc/hosts.d/15-hosts.blocklistproject-gambling&
+curl -s https://blocklistproject.github.io/Lists/malware.txt > /etc/hosts.d/16-hosts.blocklistproject-malware&
+curl -s https://blocklistproject.github.io/Lists/phishing.txt > /etc/hosts.d/17-hosts.blocklistproject-phishing&
+curl -s https://blocklistproject.github.io/Lists/piracy.txt > /etc/hosts.d/18-hosts.blocklistproject-piracy&
+curl -s https://blocklistproject.github.io/Lists/porn.txt > /etc/hosts.d/19-hosts.blocklistproject-porn&
+curl -s https://blocklistproject.github.io/Lists/ransomware.txt > /etc/hosts.d/20-hosts.blocklistproject-ransomware&
+curl -s https://blocklistproject.github.io/Lists/redirect.txt > /etc/hosts.d/21-hosts.blocklistproject-redirect&
+curl -s https://blocklistproject.github.io/Lists/scam.txt > /etc/hosts.d/22-hosts.blocklistproject-scam&
+curl -s https://blocklistproject.github.io/Lists/tiktok.txt > /etc/hosts.d/23-hosts.blocklistproject-tiktok&
+curl -s https://blocklistproject.github.io/Lists/torrent.txt > /etc/hosts.d/24-hosts.blocklistproject-torrent&
+curl -s https://blocklistproject.github.io/Lists/tracking.txt > /etc/hosts.d/25-hosts.blocklistproject-tracking&

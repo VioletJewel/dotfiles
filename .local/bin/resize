@@ -1,0 +1,173 @@
+#!/usr/bin/dash
+
+version='1.1';
+
+printhelp(){
+  cat <<EOF
+Usage: resize [OPTIONS]
+
+  plan9-like window resize
+
+    First, click to select a window (or use -c flag for current window). Then,
+    click+drag to resize selected window, or click another window to make the
+    selected window take its shape. POSIX compliant.
+
+  Quick Examples:
+    resize -x -3 -y -1  # resize window and set x- and y-offsets to -3 & -1
+    resize -c           # resize current window
+
+  Options:
+    -x --x-offset [<off>]    offset window's x-coordinate by <off> (default: 0)
+    -y --y-offset [<off>]    offset window's y-coordunate by <off> (default: 0)
+    -w --width-inc [<inc>]   increase window's width by <inc> (default: 0)
+    -h --height-inc [<inc>]  increase window's height by <inc> (default: 0)
+    -c --current             resize current window (don't select window first)
+    -C --cancellable         enables cancellation of slop with Escape
+
+    -H --help                display this help and exit
+    -V --version             display the version and exit
+
+  Environment Variables:
+    Instead of using the above flags, you can also use environment variables.
+    You can't use both, and the options overwrite the environment variables:
+      RESIZE_X_OFF=2 resize      =~ resize -x 2
+      RESIZE_Y_OFF=2 resize      =~ resize -y 2
+      RESIZE_W_INC=2 resize      =~ resize -w 2
+      RESIZE_H_INC=2 resize      =~ resize -h 2
+      RESIZE_CAN_CANCEL=1 resize =~ resize -c
+
+  Dependencies:
+    bash, grep, cut, xwininfo, xdo, slop
+EOF
+};
+
+argv="$(getopt -n vol \
+  -l 'help,version,x-offset:,y-offset:,width-inc:,height-inc:,current,cancellable' \
+  -o 'HVx:y:w:h:cC' -- "$@" \
+  )";
+
+if [ "$?" -ne 0 ];
+then
+  exit 1;
+fi;
+
+# export RESIZE_CAN_CANCEL=1 if you want to use ESC to cancel slop selection
+if [ "${RESIZE_CAN_CANCEL:-0}" -gt 0 ];
+then
+  k='';
+else
+  k='k';
+fi;
+
+x="${RESIZE_X_OFF:-0}";
+y="${RESIZE_Y_OFF:-0}";
+w="${RESIZE_H_INC:-0}";
+h="${RESIZE_V_INC:-0}";
+
+cur=0;
+
+eval set -- "$argv";
+
+while true;
+do
+  case "$1"
+  in
+
+    -H|--help)
+      printhelp;
+      exit 0;
+      ;;
+
+    -V|--version)
+      echo "resize $version";
+      exit 0;
+      ;;
+
+    -x|--x-offset)
+      x="$2";
+      shift;
+      shift;
+      ;;
+
+    -y|--y-offset)
+      y="$2";
+      shift;
+      shift;
+      ;;
+
+    -w|--width-inc)
+      w="$2";
+      shift;
+      shift;
+      ;;
+
+    -h|--height-inc)
+      h="$2";
+      shift;
+      shift;
+      ;;
+
+    -c|--current)
+      cur=1;
+      shift;
+      ;;
+
+    -C|--cancellable)
+      k='k';
+      ;;
+
+    --)
+      shift;
+      break;
+      ;;
+
+  esac;
+done;
+
+# get Root window ID
+rid="$(xwininfo -root -int | grep 'Window id:' | cut -d' ' -f4)";
+
+if [ "$cur" -ne 0 ];
+then
+
+  id="$(xdo id)";
+
+else
+
+  # get current window ID (and Cancel if user cancelled)
+  IFS=' ' read -r id c <<EOF
+  $(slop -${k}t 9999999 -n 2 -f '%i %c')
+EOF
+
+  # exit if Cancelled or current window ID = Root window ID
+  if [ "$c" -ne 0 ];
+  then
+    exit 1;
+  fi;
+  if [ "$id" = "$rid" ];
+  then
+    exit 2;
+  fi;
+
+fi;
+
+# select window or draw box (store To-window X, Y, Width, and Height and Cancel)
+IFS=' ' read -r tx ty tw th c <<EOF
+$(slop -${k}t 40 -n 2 -f '%x %y %w %h %c')
+EOF
+# ;$(# fix syntax hl
+
+# exit if Cancelled
+if [ "${c:-0}" -ne 0 ];
+then
+  exit 3;
+fi;
+
+# activate window (required for most WMs) and raise
+xdo activate "$id";
+xdo raise "$id";
+
+# resize window to selection
+xdo resize -w"$((tw+w))" -h"$((th+h))" "$id";
+xdo move -x"$((tx-1+x))" -y"$((ty-1+y))" "$id";
+

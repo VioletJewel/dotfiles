@@ -1,0 +1,15 @@
+#!/usr/bin/dash
+
+ffplay -loglevel quiet -fast -framedrop -sync video /dev/video2&
+vidPid=$!;
+echo -n 'Return to start recording';
+read _;
+ffmpeg -loglevel quiet -y -nostdin -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0+0,0 -f pulse -ac 2 -i default ~/Videos/recording.mkv&
+recPid=$!;
+echo -n 'Return to stop recording';
+read _;
+kill "$recPid";
+kill "$vidPid";
+wait "$recPid";
+ffmpeg -loglevel quiet -y -nostdin -i ~/Videos/recording.mkv -itsoffset 0.5 -i ~/Videos/recording.mkv -c:a copy -c:v copy -map 0:v:0 -map 1:a:0 ~/Videos/recording_fixaudio.mkv
+echo 'Done';

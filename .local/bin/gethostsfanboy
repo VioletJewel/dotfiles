@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# from https://easylist.to/
+
+curl -s https://easylist.to/easylist/easylist.txt > /etc/hosts.d/03-hosts.easylist&
+curl -s https://secure.fanboy.co.nz/fanboy-cookiemonster.txt > /etc/hosts.d/04-hosts.cookiemonster&
+curl -s https://easylist.to/easylist/easyprivacy.txt > /etc/hosts.d/05-hosts.easyprivacy&
+curl -s https://secure.fanboy.co.nz/fanboy-annoyance.txt > /etc/hosts.d/06-hosts.fanboy-annoyance&
+curl -s https://easylist.to/easylist/fanboy-social.txt > /etc/hosts.d/07-hosts.fanboy-social&

@@ -1,0 +1,22 @@
+#!/usr/bin/dash
+
+# printf "[%s] %0.2f%%\n" "$(cat /sys/class/power_supply/BAT0/status)" "$(echo "($(cat /sys/class/power_supply/BAT0/energy_now)/$(cat /sys/class/power_supply/BAT0/energy_full))*100" | bc -l)";
+
+BAT=BAT0;
+
+ROOT=/sys/class/power_supply;
+ENERGY=energy;
+
+# ROOT=/proc/acpi/battery/; # old
+# ENERGY=charge; # old
+
+showDate(){
+  date "+%a %b %d  %H:%M";
+};
+
+now=$(cat "$ROOT/$BAT/${ENERGY}_now");
+full=$(cat "$ROOT/$BAT/${ENERGY}_full");
+status="$(cat /sys/class/power_supply/BAT0/status)";
+printf "%0.2f%% (%s)" $(echo "($now/$full)*100" | bc -l) "$status";
+
+# vim: ft=sh

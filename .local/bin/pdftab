@@ -1,0 +1,17 @@
+#!/usr/bin/dash
+F=/tmp/pdftab.xid;
+xid=0;
+pid=0;
+if [ -f $F ]; then
+  read -r xid </tmp/pdftab.xid;
+else
+  FIFO=/tmp/pdftab.fifo;
+  mkfifo $FIFO 2>/dev/null;
+  tabbed -c >$FIFO&
+  pid=$!;
+  read -r xid <$FIFO;
+  printf '%s' $xid >$F;
+  rm $FIFO;
+fi;
+curl -s "$(xsel -bo)" | zathura --fork -e $xid -;
+[ $pid = 0 ] || { wait $pid && rm $F; };

@@ -1,0 +1,354 @@
+#!/usr/bin/dash
+#             _
+# __   _____ | |  a simple script to
+# \ \ / / _ \| |  control volume from
+#  \ V / (_) | |  the command-line or
+#   \_/ \___/|_|  a WM keybinding
+#
+# Author: Violet
+# Last Change: 07 April 2023
+
+version='1.4';
+
+printhelp(){
+  cat <<EOF
+Usage: $(basename "$0") [OPTIONS]
+
+ Easily see and change volume with amixer
+
+  Quick Examples:
+    vol -i    # increase volume by 5 to nearest multiple of 5
+    vol -ii   # increase volume by 10 to nearest multiple of 5
+    vol -d    # decrease volume by 5 to nearest multiple of 5
+    vol -t    # toggle mute
+    vol -m    # mute
+    vol -i 5  # increase volume by 5
+    vol -vi   # increase volume and print output to command-line
+    vol -ni   # increase volume and use notify-send to send notification
+    vol -yi   # dynamically increase volume
+
+  Options:
+    -i --increase [<amt>]  increment volume by <amt> (default: 5)
+    -d --decrease [<amt>]  decrement volume by <amt> (default: 5)
+    -s --set <amt>         set volume to <amt>
+    -x --mixer <mixer>     select <mixer> (when unspecified: "Master")
+    -c --card <card>       select <card> (when unspecified: "")
+    -m --mute              mute
+    -u --unmute            unmute
+    -t --toggle            toggle mute
+    -q --quiet             don't print or notify; negates -v
+    -v --verbose           print to stdout (-vv to debug) and don't notify
+    -n --notify            notify (even with -v/-q); default if noninteractive
+    -N --no-notify         do not notify (even with -n or noninteractive)
+
+    -h --help              display this help and exit
+    -V --version           display the version and exit
+
+  Note: This was written to be used with dwm and dunst as a notification manager
+        (ie, like vol -nyi in a dwm binding) but also serves as a script that
+        can be run directly from a shell with useful flags
+
+  Note: Yes, this uses the despised linux-utils' getopt because the options are
+        static, and their arguments won't ever contain spaces, and the script
+        can be broken, but just use it as intended ;)
+EOF
+};
+
+argv="$(getopt -n vol \
+  -l 'help,version,quiet,verbose,notify,no-notify,increase::,decrease::,set:,mixer:,card:,mute,unmute,toggle' \
+  -o 'hVqvnNi::d::s:x:c:mut' -- "$@" \
+  )";
+
+if [ "$?" -ne 0 ];
+then
+  printhelp;
+  exit 1;
+fi;
+
+eval set -- "$argv";
+
+mixer='Master';
+card='';
+voldelta=0;
+volstddelta=0;
+volset=-1;
+mutectl=0;
+verbosity=0;
+toggle='-1';
+if tty -s;
+then
+  notify=0;
+else
+  notify=1;
+fi;
+nonotify=0;
+
+while true
+do
+  case "$1"
+  in
+
+    -h|--help)
+      printhelp;
+      exit 0;
+      ;;
+
+    -V|--version)
+      echo "vol $version";
+      exit 0;
+      ;;
+
+    -i|--increase)
+      n="$(echo -n "$2" | sed 's/^\([0-9]\+\)\?.*/\1/')"
+      if [ "_$n" = "_" ];
+      then
+        if echo -n "$2" | grep -Eq "^.";
+        then
+          o="$(echo -n "$2" | cut -c1)";
+          r="$(echo -n "$2" | sed 's/^.\(.*\)/\1/')";
+          shift;
+          shift;
+          set -- -"$o" "$r" "$@";
+        else
+          if [ "_$2" = "_" ];
+          then
+            shift;
+          fi;
+          shift;
+        fi;
+        volstddelta=$((volstddelta+1));
+      else
+        r="$(echo -n "$2" | sed 's/^[0-9]\+\(.*\)/\1/')"
+        voldelta="$((voldelta+$n))";
+        shift;
+        shift;
+        if [ "_$r" != "_" ];
+        then
+          o="$(echo -n "$r" | cut -c1)";
+          r="$(echo -n "$r" | sed 's/^.\(.*\)/\1/')";
+          set -- -"$o" "$r" "$@";
+        fi;
+      fi;
+      ;;
+
+    -d|--decrease)
+      n="$(echo -n "$2" | sed 's/^\([0-9]\+\)\?.*/\1/')"
+      if [ "_$n" = "_" ];
+      then
+        if echo -n "$2" | grep -Eq "^.";
+        then
+          o="$(echo -n "$2" | cut -c1)";
+          r="$(echo -n "$2" | sed 's/^.\(.*\)/\1/')";
+          shift;
+          shift;
+          set -- -"$o" "$r" "$@";
+        else
+          if [ "_$2" = "_" ];
+          then
+            shift;
+          fi;
+          shift;
+        fi;
+        volstddelta=$((volstddelta-1));
+      else
+        r="$(echo -n "$2" | sed 's/^[0-9]\+\(.*\)/\1/')"
+        voldelta="$((voldelta-$n))";
+        shift;
+        shift;
+        if [ "_$r" != "_" ];
+        then
+          o="$(echo -n "$r" | cut -c1)";
+          r="$(echo -n "$r" | sed 's/^.\(.*\)/\1/')";
+          set -- -"$o" "$r" "$@";
+        fi;
+      fi;
+      ;;
+
+    -s|--set)
+      if ! echo -n "$2" | grep -Eq '^[0-9]+$';
+      then
+        if [ "$verbosity" -ge 0 ];
+        then
+          >&2 echo "vol: invalid option: '$1' requires integer, not '$2'";
+        fi;
+        exit 2;
+      fi;
+      volset="$2";
+      shift;
+      shift;
+      ;;
+
+    -m|--mute)
+      shift;
+      mutectl="$((mutectl+1))";
+      ;;
+
+    -u|--unmute)
+      shift;
+      mutectl="$((mutectl-1))";
+      ;;
+
+    -t|--toggle)
+      shift;
+      toggle="$((toggle*-1))";
+      ;;
+
+    -v|--verbose)
+      shift;
+      verbosity="$((verbosity+1))";
+      ;;
+
+    -q|--quiet)
+      shift;
+      verbosity="$((verbosity-1))";
+      ;;
+
+    -n|--notify)
+      shift;
+      notify=1;
+      ;;
+
+    -N|--no-notify)
+      shift;
+      nonotify=1;
+      ;;
+
+    -x|--mixer)
+      shift;
+      mixer="$1";
+      shift;
+      ;;
+
+    -c|--card)
+      shift;
+      card="$1";
+      shift;
+      ;;
+
+    --)
+      shift;
+      break;
+      ;;
+
+    *)
+      echo "*" "<$1>" "<$2>"
+      break;
+      ;;
+
+  esac;
+done;
+
+if [ -z "$card" ]
+then
+  _card="";
+else
+  _card="-c $card";
+fi;
+
+IFS=' ' read vol on_off <<EOF
+$(amixer get $_card "$mixer" 2>/dev/null \
+  | perl -n -e '/\[(\d+)%\].*\[(on|off)\]$/ && print("$1 $2\n") && exit')
+EOF
+# ;$(# fix syntax hl
+
+if [ -z "$vol" ];
+then
+  >&2 echo "Fatal Error: unable to use amixer to get volume information with \"amixer $_card get $mixer\".";
+  exit 1;
+fi;
+
+if [ "$volstddelta" -ne 0 ];
+then
+  drift="$((2 - ( (vol % 5 + 2) % 5) ))";
+  voldelta="$((voldelta + volstddelta * 5 + drift))";
+fi;
+
+if [ "$volset" -ne -1 ];
+then
+  if [ "$verbosity" -gt 1 ];
+  then
+    >&2 echo "> volume = $volset";
+  fi;
+  amixer set $_card "$mixer" "$volset%" >/dev/null;
+fi;
+
+if [ "$voldelta" -ne 0 ];
+then
+  volsym='+';
+  if [ "$voldelta" -lt 0 ];
+  then
+    volsym='-';
+    voldelta="$((voldelta * -1))";
+  fi;
+  if [ "$verbosity" -gt 1 ];
+  then
+    >&2 echo "> volume $volsym= $voldelta";
+  fi;
+  amixer set $_card "$mixer" "$voldelta%$volsym" >/dev/null;
+fi;
+
+if [ "$toggle" -eq 1 ];
+then
+  if [ "$verbosity" -gt 1 ];
+  then
+    >&2 echo '> toggling mute';
+  fi;
+  amixer set $_card "$mixer" toggle >/dev/null;
+else
+  if [ "$mutectl" -gt 0 ];
+  then
+    if [ "$verbosity" -gt 1 ];
+    then
+      >&2 echo '> muting';
+    fi;
+    amixer set $_card "$mixer" mute >/dev/null;
+  elif [ "$mutectl" -lt 0 ];
+  then
+    if [ "$verbosity" -gt 1 ];
+    then
+      >&2 echo '> unmuting';
+    fi;
+    amixer set $_card "$mixer" unmute >/dev/null;
+  fi;
+fi;
+
+read vol on_off <<EOF
+$(amixer get $_card "$mixer" 2>/dev/null \
+  | perl -n -e '/\[(\d+)%\].*\[(on|off)\]$/ && print("$1 $2\n") && exit')
+EOF
+# ;$(# fix syntax hl
+
+mutestr='';
+if [ "$on_off" = off ]
+then
+  mutestr='muted';
+fi;
+
+if [ "$verbosity" -gt 0 ];
+then
+  echo "$vol%${mutestr:+($mutestr)}";  # ;$(# fix syntax hl
+fi;
+
+if [ -n "$mutestr" ] || [ "$vol" -eq 0 ];
+then
+  icon_name="audio-volume-muted";
+elif [ "$vol" -lt 33 ];
+then
+  icon_name="audio-volume-low";
+elif [ "$vol" -lt 67 ];
+then
+  icon_name="audio-volume-medium";
+else
+  icon_name="audio-volume-high";
+fi;
+
+if [ "$notify" -eq 1 ] && [ "$nonotify" -ne 1 ];
+then
+  # pgrep -x dunst >/dev/null && \
+  notify-send "${mutestr:-vol} $vol" \
+    -i "$icon_name" \
+    -h "int:value:$vol" \
+    -h 'string:synchronous:volume';
+fi;
+
+# vim: ft=sh

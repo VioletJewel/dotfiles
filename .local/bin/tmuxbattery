@@ -1,0 +1,60 @@
+#!/bin/sh
+
+# TODO
+fcurr="/sys/class/power_supply/BAT0/energy_now"
+ffull="/sys/class/power_supply/BAT0/energy_full"
+fstat="/sys/class/power_supply/BAT0/status"
+
+curr="$(cat "$fcurr")";
+full="$(cat "$ffull")";
+
+charge="$(printf "($curr/$full)*100\n" | bc -l)";
+status="$(cat "$fstat" | head -n1)";
+
+# nokto
+if [ "$status" = "Charging" ]; then
+    i='#[fg=colour139]⚡';
+elif [ "$status" = "Discharging" ]; then
+	if [ "$(printf "$charge < 15\n" | bc -l)" -eq 1 ]; then
+		i='#[fg=colour175]▕ ▏'; #printf '#[fg=colour175]  ';
+	elif [ "$(printf "$charge < 40\n" | bc -l)" -eq 1 ]; then
+		i='#[fg=colour180]▕░▏'; #printf '#[fg=colour180]  ';
+	elif [ "$(printf "$charge < 60\n" | bc -l)" -eq 1 ]; then
+		i='#[fg=colour109]▕▒▏'; #printf '#[fg=colour109]  ';
+	elif [ "$(printf "$charge < 80\n" | bc -l)" -eq 1 ]; then
+		i='#[fg=colour151]▕▓▏'; #printf '#[fg=colour151]  ';
+	else
+		i='#[fg=colour110]▕▉▏'; #printf '#[fg=colour110]  ';
+	fi
+elif [ "$status" = "Full" ]; then
+	i='#[fg=colour110]✓▕▉▏';
+  charge='100%%'; #printf '#[fg=colour110]   100%%';
+else
+  i="$(printf '#[fg=colour175]?#[fg=colour139][%s]' "$status")";
+fi;
+
+# # vulpo
+# if [ "$status" = "Charging" ]; then
+#     i='#[fg=colour66]⚡';
+# elif [ "$status" = "Discharging" ]; then
+# 	if [ "$(printf "$charge < 15\n" | bc -l)" -eq 1 ]; then
+# 		i='#[fg=colour167]↓▕ ▏'; #printf '#[fg=colour175]  ';
+# 	elif [ "$(printf "$charge < 40\n" | bc -l)" -eq 1 ]; then
+# 		i='#[fg=colour95]↓▕░▏'; #printf '#[fg=colour180]  ';
+# 	elif [ "$(printf "$charge < 60\n" | bc -l)" -eq 1 ]; then
+# 		i='#[fg=colour180]↓▕▒▏'; #printf '#[fg=colour109]  ';
+# 	elif [ "$(printf "$charge < 80\n" | bc -l)" -eq 1 ]; then
+# 		i='#[fg=colour101]↓▕▓▏'; #printf '#[fg=colour151]  ';
+# 	else
+# 		i='#[fg=colour65]↓▕▉▏'; #printf '#[fg=colour110]  ';
+# 	fi
+# elif [ "$status" = "Full" ]; then
+# 	i='#[fg=colour65]✓▕▉▏';
+#   charge='100%%'; #printf '#[fg=colour110]   100%%';
+# else
+#   # i="$(printf '#[fg=colour175]?#[fg=colour139][%s]' "$status")";
+#   i='#[fg=colour175]?';
+# fi;
+
+# echo "'$status'" "'$i'"
+printf '%s%0.2f%%' "$i" "$charge";
