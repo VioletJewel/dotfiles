@@ -1,0 +1,221 @@
+
+Emacs.font: FiraCode Nerd Font-12
+
+Xmessage*font: -misc-dejavu sans mono-medium-r-normal-*-17-120-100-100-m-*-*-*
+
+Xft.dpi:       96
+Xft.antialias: 1
+Xft.autohint:  0
+Xft.hinting:   1
+Xft.hintstyle: hintsfull
+Xft.lcdfilter: lcdlight
+Xft.rgba:      rgb
+
+Xcursor.theme: BMZ-cursor
+
+URxvt.font:              xft:FiraCode Nerd Font:size=12, xft:Twemoji:size=12
+/* URxvt.font:              xft:DejaVu Sans Mono:size=12, xft:Noto Color Emoji:size=12 */
+! URxvt.font:              xft:Liberation Mono:size=12, xft:Noto Color Emoji:size=12
+URxvt.letterSpace:       -1
+URxvt.geometry:          80x28
+! URxvt.geometry:          191x56
+! URxvt.depth:             24
+URxvt.borderless:        true
+URxvt.externalBorder:    0px
+URxvt.internalBorder:    4px
+! URxvt.internalBorder:    0px
+URxvt.scrollBar:         false
+URxvt.saveLines:         4000
+URxvt.cursorBlink:       false
+URxvt.scrollTtyOutput:   false
+URxvt.scrollWithBuffer:  true
+URxvt.scrollTtyKeypress: true
+URxvt.buffered:          true
+URxvt.intensityStyles:   false
+URxvt.fading:            0
+URxvt.iconFile:          /usr/share/icons/Papirus/64x64/apps/urxvt.svg
+URxvt.iconName:          urxvt
+URxvt.title:             URxvt
+
+! fix ctrl-arrow (in, eg, vim :terminal)
+URxvt.keysym.C-Up:     \033[1;5A
+URxvt.keysym.C-Down:   \033[1;5B
+URxvt.keysym.C-Left:   \033[1;5D
+URxvt.keysym.C-Right:  \033[1;5C
+
+! disable ctrl+shift 'feature'
+URxvt.iso14755:     false
+URxvt.iso14755_52:  false
+
+! perl extensions
+URxvt.perl-ext-common:  default,matcher,clipboard,keyboard-select,url-select,font-size
+
+! right click opens url
+URxvt.matcher.button: 3
+
+! copy paste
+URxvt.clipboard.autocopy:   true
+URxvt.clipboard.copycmd:    xsel -ib
+URxvt.clipboard.pastecmd:   xsel -ob
+URxvt.keysym.C-S-V:   perl:clipboard:paste
+URxvt.keysym.C-S-C:   perl:clipboard:copy
+
+! kbd-based selection/search
+URxvt.keyboard-select.clipboard: true
+URxvt.keysym.M-Escape:      perl:keyboard-select:activate
+URxvt.keysym.M-s:           perl:keyboard-select:search
+
+URxvt.keysym.M-u:           perl:url-select:select_next
+URxvt.url-select.autocopy:  false
+URxvt.url-select.launcher:  xdg-open
+
+URxvt.keysym.C-M-Up:    font-size:increase
+URxvt.keysym.C-M-Down:  font-size:decrease
+URxvt.keysym.C-M-Left:  font-size:reset
+URxvt.keysym.C-M-Right: font-size:show
+
+! dracula
+*.foreground: #F8F8F2
+*.background: #282A36
+*.color0:     #000000
+*.color8:     #4D4D4D
+*.color1:     #FF5555
+*.color9:     #FF6E67
+*.color2:     #50FA7B
+*.color10:    #5AF78E
+*.color3:     #F1FA8C
+*.color11:    #F4F99D
+*.color4:     #BD93F9
+*.color12:    #CAA9FA
+*.color5:     #FF79C6
+*.color13:    #FF92D0
+*.color6:     #8BE9FD
+*.color14:    #9AEDFE
+*.color7:     #BFBFBF
+*.color15:    #E6E6E6
+
+! ! nokto
+! *.foreground: #d0d0d0
+! *.background: #000000
+! ! URxvt.background: [92]#1c1c1c
+! ! URxvt.background: #000000
+! *.cursorColor: #f0f0f0
+! *.cursorColor2: #000000
+! ! *.highlightColor: [75]#d787af
+! *.highlightColor: #d787af
+! *.highlightTextColor: #000000
+! *.selection: #d787af
+! *.color0:  #303030
+! *.color1:  #d7005f
+! *.color2:  #afd7af
+! *.color3:  #af8787
+! *.color4:  #87afd7
+! *.color5:  #af87af
+! *.color6:  #87afaf
+! *.color7:  #d0d0d0
+! *.color8:  #808080
+! *.color9:  #d787af
+! *.color10: #87af5f
+! *.color11: #d7af87
+! *.color12: #5f8787
+! *.color13: #af87d7
+! *.color14: #5faf87
+! *.color15: #e4e4e4
+
+! ! vulpo
+! *.foreground: #d7d7af
+! *.background: #1c1c1c
+! ! URxvt.background: #1c1c1c
+! URxvt.background: [86]#1c1c1c
+! *.cursorColor: #c6c6c6
+! *.cursorColor2: #000000
+! *.pointerColor: #444444
+! *.pointerColor2: #000000
+! *.pointerShape: left_ptr
+! *.highlightColor: #444444
+! *.highlightTextColor: #87875f
+! *.selection: #444444
+! *.color0:  #444444
+! *.color1:  #d75f5f
+! *.color2:  #5f875f
+! *.color3:  #d7875f
+! *.color4:  #5f8787
+! *.color5:  #875f5f
+! *.color6:  #87875f
+! *.color7:  #d7d7af
+! *.color8:  #626262
+! *.color9:  #d787af
+! *.color10: #5faf5f
+! *.color11: #d7af87
+! *.color12: #87afaf
+! *.color13: #af87af
+! *.color14: #5faf87
+! *.color15: #c6c6c6
+
+! ! gruvbox
+! *.foreground: #ebdbb2
+! *.background: #282828
+! *.selection:  #665c54
+! *.color0:  #3c3836
+! *.color1:  #cc241d
+! *.color2:  #98971a
+! *.color3:  #d79921
+! *.color4:  #458588
+! *.color5:  #b16286
+! *.color6:  #689d6a
+! *.color7:  #ebdbb2
+! *.color8:  #504945
+! *.color9:  #FB4934
+! *.color10: #B8BB26
+! *.color11: #FABD2F
+! *.color12: #83A598
+! *.color13: #D3869B
+! *.color14: #8EC07C
+! *.color15: #fbf1c7
+
+! ! nord
+! *.foreground:         #d8dee9
+! *.background:         #2e3440
+! *.cursorColor:        #d8dee9
+! *.selection:          #3b4252
+! *.highlightColor:     #3b4252
+! *.highlightTextColor: #e5e9f0
+! *.color0:             #3b4252
+! *.color1:             #bf616a
+! *.color2:             #a3be8c
+! *.color3:             #ebcb8b
+! *.color4:             #81a1c1
+! *.color5:             #b48ead
+! *.color6:             #88c0d0
+! *.color7:             #e5e9f0
+! *.color8:             #4c566a
+! *.color9:             #bf616a
+! *.color10:            #a3be8c
+! *.color11:            #ebcb8b
+! *.color12:            #81a1c1
+! *.color13:            #b48ead
+! *.color14:            #8fbcbb
+! *.color15:            #eceff4
+
+! ! gnome term
+! *.foreground:   #ffffff
+! *.background:   #000000
+! *.cursorColor:  #ffffff
+! *.color0:       #000000
+! *.color1:       #cc0000
+! *.color2:       #4e9a06
+! *.color3:       #c4a000
+! *.color4:       #3465a4
+! *.color5:       #75507b
+! *.color6:       #06989a
+! *.color7:       #d3d7cf
+! *.color8:       #555753
+! *.color9:       #ef2929
+! *.color10:      #8ae234
+! *.color11:      #fce94f
+! *.color12:      #729fcf
+! *.color13:      #ad7fa8
+! *.color14:      #34e2e2
+! *.color15:      #eeeeec
+
+! vim: commentstring=!\ %s:

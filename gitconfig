@@ -1,0 +1,6 @@
+[user]
+	email = foo@gmail.com
+	name = foo
+	signingkey = XXXXXXXXXXXXXXXX
+[init]
+	defaultBranch = main

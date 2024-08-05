@@ -1,0 +1,153 @@
+configuration {
+    show-icons:      false;
+    disable-history: false;
+    combi-modes: [ drun, run, ssh, filebrowser ];
+}
+
+* {
+    font: "FiraCode Nerd Font 12";
+    fg: #f8f8f2;
+    bg: #282a36;
+    bg-trans: #282a36df;
+    bg-trans2: #282a36bf;
+    lightbg-trans: #4244507f;
+    pink: #ff79c6;
+    pink-trans: #ff79c67f;
+    red: #ff5555;
+    invis: #282a3600;
+}
+
+#window {
+    background-color: @bg-trans;
+    border: 0;
+    width: 100%;
+    height: 100%;
+}
+#mainbox {
+    background-color: @bg-trans2;
+    border:           2;
+    border-radius:    0.5em;
+    border-color:     @pink;
+    padding:          2em;
+    margin: 30%;
+}
+#message {
+    border:       0;
+    border-color: @pink;
+    padding:      1em;
+}
+#textbox {
+    background-color: @bg-trans2;
+    text-color: @pink;
+    border:           2;
+    border-radius:    0.5em;
+    border-color:     @pink;
+    padding:          2em;
+    margin: 30%;
+}
+#listview {
+    background-color: @invis;
+    fixed-height: 0;
+    border:       0;
+    border-color: @pink;
+    spacing:      2px;
+    scrollbar:    true;
+    padding:      0;
+    margin:       20;
+}
+#element {
+    border:  0;
+    padding: 3;
+    margin: 3;
+}
+#element.normal.normal {
+    background-color: @invis;
+    text-color:       @fg;
+}
+#element.normal.urgent {
+    background-color: @red;
+    text-color:       @bg;
+}
+#element.normal.active {
+    background-color: @lightbg-trans;
+    text-color:       @pink;
+}
+#element.selected.normal {
+    background-color: @lightbg-trans;
+    text-color:       @pink;
+}
+#element.selected.urgent {
+    background-color: @red;
+    text-color:       @fg;
+}
+#element.selected.active {
+    background-color: @lightbg-trans;
+    text-color:       @pink;
+}
+#element.alternate.normal {
+    background-color: @invis;
+    text-color:       @fg;
+}
+#element.alternate.urgent {
+    background-color: @red;
+    text-color:       @fg;
+}
+#element.alternate.active {
+    background-color: @lightbg-trans;
+    text-color:       @pink;
+}
+#scrollbar {
+    handle-color: @pink-trans;
+    background-color: @lightbg-trans;
+    border:       0;
+    handle-width: 6;
+    padding:      6;
+}
+#sidebar {
+    border:       2px dash 0 0;
+    border-color: @pink;
+}
+#button.selected {
+    background-color: @lightbg-trans;
+    text-color:       @pink;
+}
+#inputbar {
+    spacing:    0;
+    text-color: @fg;
+    padding:    1px;
+}
+#case-indicator {
+    spacing:    0;
+    text-color: @fg;
+    background-color: @invis;
+}
+#entry {
+    spacing:    0;
+    text-color: @fg;
+    background-color: @invis;
+}
+#prompt {
+    spacing:    0;
+    text-color: @pink;
+    background-color: @invis;
+}
+#inputbar {
+    background-color: @invis;
+    children:   [ prompt,textbox-prompt-colon,entry,case-indicator ];
+}
+#textbox-prompt-colon {
+    background-color: @invis;
+    expand:     false;
+    str:        ">";
+    margin:     0 0.5em 0 0;
+    text-color: @pink;
+}
+element-text, element-icon {
+    background-color: @invis;
+    text-color: inherit;
+}
+
+element-icon {
+    background-color: @lightbg-trans;
+    border-radius: 0.5em;
+}
