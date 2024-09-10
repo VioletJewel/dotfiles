@@ -67,6 +67,10 @@ alias la='ls -a'
 alias ll='ls -l'
 alias lla='ls -la'
 
+alias ,=nvim
+alias ,c="nvim '+norm\\c'"
+alias ,f="nvim '+norm1 f'"
+
 bindkey -v
 bindkey '^P' up-history
 bindkey '^N' down-history
