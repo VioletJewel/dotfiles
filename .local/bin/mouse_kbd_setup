@@ -5,6 +5,7 @@ xset m 5/1 10
 
 setxkbmap -layout us -option -option esperanto:qwerty -option compose:rctrl,lv3:ralt_switch
 # setxkbmap -layout dvorak -option -option esperanto:dvorak -option compose:menu,lv3:ralt_switch
+# setxkbmap -layout us,bqn -option grp:switch
 
 # TODO: find touchpad name on new system
 id="$(xinput --list --id-only 'Elan Touchpad')"

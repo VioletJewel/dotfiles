@@ -1,0 +1,4 @@
+#!/bin/sh
+# xid="$(tabbed -s -n productivity -d -r 2 st -w '')";
+# st -w "$xid" -e nvim '+Neorg journal today' & wpid="$!";
+kitty -1 --instance-group productivity --name productivity nvim '+Neorg journal today'

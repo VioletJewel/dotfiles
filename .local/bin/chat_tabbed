@@ -1,0 +1,5 @@
+#!/bin/sh
+# xid="$(tabbed -c -s -n chat -d -r 2 st -w '')";
+# st -w "$xid" -e weechat& wpid="$!";
+# st -w "$xid" -e gomuks& gpid="$!";
+kitty -1 --instance-group chat --name chat weechat

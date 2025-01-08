@@ -1,0 +1,55 @@
+#!/usr/bin/dash
+
+lrun(){ [ -f "$1" ] && "$@" || 2>&1 echo "WARNING: file '$1' not found"; }
+run(){ hash "$1" && "$@" || 2>&1 echo "WARNING: program '$1' not found"; }
+
+_sxlog="$HOME"/.local/state/dwm;
+[ -d "$_sxlog" ] || mkdir -p "$_sxlog";
+
+initprogs(){
+  # background programs
+  run && dunst&
+  hash slock && run xautolock -time 5 -corners 000- -locker slock&
+  # run syncthing
+  lrun "$HOME"/.local/bin/dwmstatus&
+  lrun "$HOME"/.fehbg&
+
+  # # unused background programs
+  # run fcitx&
+  # hash emacs && { emacs --daemon && notify-send "Emacs daemon loaded"; }&
+  # run urxvtd -q -f -o&
+  # run nm-applet&
+  # run redshift -r -P&
+  # run oneko -tomoyo -tofocus -fg '#282a36' -bg '#ff79c6' -speed 40 -idle 500 -position -35-35&
+
+  # foreground programs
+  hash kitty && lrun "$HOME"/.local/bin/chat_tabbed&
+  hash kitty && lrun "$HOME"/.local/bin/productivity_tabbed&
+  # run obsidian
+  run firefox&
+  hash kitty && lrun "$HOME"/.local/bin/term_tabbed&
+  run discord&
+  run element-desktop&
+
+  lrun "$HOME"/.local/bin/mouse_kbd_setup&
+}
+
+backuperrorfiles(){
+  for i in 8 7 6 5 4 3 2 1 ""; do
+    j="$((i+1))";
+    f="$_sxlog"/errors"$i".log
+    n="$_sxlog"/errors"$j".log
+    [ -f "$f"  ] && mv "$f" "$n"
+  done;
+}
+
+[ -f /tmp/.dwm.stop ] && rm -f /tmp/.dwm.stop
+
+while ! [ -f /tmp/.dwm.stop ]; do
+  backuperrorfiles;
+  [ -z "$SSH_AGENT_PID" ] && eval "$(ssh-agent)";
+  initprogs;
+  initprogs(){ :; }
+  dwm 2>"$_sxlog"/errors.log >"$_sxlog"/out.log;
+  [ -n "$SSH_AGENT_PID" ] && eval "$(ssh-agent -k)";
+done;

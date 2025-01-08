@@ -37,7 +37,7 @@ zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower
 # https://superuser.com/questions/476532/how-can-i-make-zshs-vi-mode-behave-more-like-bashs-vi-mode
 KEYTIMEOUT=1
 
-HISTFILE=~/.local/zsh_history
+HISTFILE=~/.local/zsh/zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
 export GREP_COLOR='auto'
@@ -52,7 +52,7 @@ setopt appendhistory
 # setopt +o nomatch
 setopt null_glob
 
-eval "$(dircolors -b $HOME/.dircolors)"
+[ -f "$HOME"/.dirolors ] && eval "$(dircolors -b "$HOME"/.dircolors)"
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # https://wiki.archlinux.org/index.php/Dotfiles
@@ -61,15 +61,31 @@ function dotfiles {
   /usr/bin/git --git-dir="$HOME/.config/dotfiles/" --work-tree="$HOME" $@
 }
 alias df=dotfiles
+if ! [ -d "$HOME"/.config/dotfiles ]; then
+  read "pr?[34mdotfiles[0m not installed. Install? [Y/n] ";
+  if [ ${${pr:-y}[1]:l} = y ]; then
+    git clone --bare https://github.com/violetjewel/dotfiles.git "$HOME"/.config/dotfiles;
+    dotfiles config --local status.showUntrackedFiles no;
+    echo;
+    echo 'now run `dotflies checkout`.';
+  fi;
+fi;
 
 alias ls='ls --color=auto'
 alias la='ls -a'
 alias ll='ls -l'
 alias lla='ls -la'
 
+function journal {
+  nvim "+Neorg journal ${1:=today}";
+}
+
 alias ,=nvim
 alias ,c="nvim '+norm\\c'"
 alias ,f="nvim '+norm1 f'"
+alias ,j="journal"
+
+abduco(){ command abduco -e $'92;5u' "$@"; }
 
 bindkey -v
 bindkey '^P' up-history
@@ -149,7 +165,19 @@ function man(){
     echo 'No manual entry for '"$*"
     return 1
   fi
-  nvim +"silent Man $*" +'silent only'
+  nvim +"silent Man $*" +'silent only|set nomodifiable nomodified'
+}
+
+function nvdiff(){
+  if ! [[ -t 0 && -t 1 && -t 2 ]]; then
+    command nvim "$@"
+    return
+  fi
+  nvim +'windo diffthis' -O2 "$@"
+}
+
+function ng(){
+  nvim +Git +'wincmd o';
 }
 
 function doc2pdf {
@@ -241,24 +269,4 @@ bindkey '^R' fzf-history-widget
 
 unfunction _installed;
 
-# initconda(){
-#
-# # >>> conda initialize >>>
-# # !! Contents within this block are managed by 'conda init' !!
-# __conda_setup="$('/opt/anaconda/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-# if [ $? -eq 0 ]; then
-#     eval "$__conda_setup"
-# else
-#     if [ -f "/opt/anaconda/etc/profile.d/conda.sh" ]; then
-#         . "/opt/anaconda/etc/profile.d/conda.sh"
-#     else
-#         export PATH="/opt/anaconda/bin:$PATH"
-#     fi
-# fi
-# unset __conda_setup
-# # <<< conda initialize <<<
-#
-# };
-
-eval "$(zoxide init zsh)"
-
+hash zoxide 2>/dev/null && eval "$(zoxide init zsh)"

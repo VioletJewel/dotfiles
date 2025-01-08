@@ -4,7 +4,7 @@ then
   set -o emacs
 fi;
 
-export PATH="$PATH":"$HOME"/.local/bin:/bin
+export PATH="$PATH":"$HOME"/.local/bin
 export SUDO_EDITOR="/usr/bin/nvim -u NONE"
 export EDITOR="/usr/bin/nvim"
 export VISUAL="$EDITOR"
@@ -13,6 +13,13 @@ export TERMINAL="/usr/local/bin/st"
 export XCURSOR_THEME="BMZ-cursor"
 export MOZ_USE_XINPUT2=1
 # export MOZ_ENABLE_WAYLAND=1
+
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XIM_PROGRAM=/usr/bin/fcitx5
+export XMODIFIERS=@im=fcitx
+
+! [ -f /tmp/.xdg_update ] && [ -x "$HOME"/.local/bin/xdg_update ] && { "$HOME"/.local/bin/xdg_update; touch /tmp/.xdg_update; };
 
 # export PYTHONSTARTUP=~/.pythonrc
 # export SAL_USE_VCLPLUGIN=gtk # libreoffice

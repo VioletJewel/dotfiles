@@ -1,0 +1,5 @@
+#!/bin/sh
+# xid="$(tabbed -s -n term -d -r 2 st -w '')";
+# st -w "$xid"& wpid="$!";
+# st -w "$xid" -e gomuks& gpid="$!";
+kitty -1 --instance-group term --name term

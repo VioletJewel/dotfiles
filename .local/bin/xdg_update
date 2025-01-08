@@ -1,0 +1,13 @@
+#!/usr/bin/dash
+
+x="xdg-user-dirs-update --set"
+l="$HOME"/.local/
+
+$x     DESKTOP "$l"labortablo
+$x    DOWNLOAD "$l"elŝutujo
+$x   TEMPLATES "$l"ŝablonoj
+$x PUBLICSHARE "$l"komunujo
+$x   DOCUMENTS "$l"Dokumentujo
+$x       MUSIC "$l"muzikujo
+$x    PICTURES "$l"bildujo
+$x      VIDEOS "$l"videujo

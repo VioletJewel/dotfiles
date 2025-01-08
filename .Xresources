@@ -13,6 +13,12 @@ Xft.rgba:      rgb
 
 Xcursor.theme: BMZ-cursor
 
+XTerm.vt100.faceName: xft:FiraCode Nerd Font:size=12:style=Book:antialias=true
+XTerm.vt100.faceNameDoublesize: xft:FiraCode Nerd Font:size=12:style=Book:antialias=true
+! XTerm.vt100.faceSize: 8
+
+! XTerm.vt100.font: 7x13
+
 URxvt.font:              xft:FiraCode Nerd Font:size=12, xft:Twemoji:size=12
 /* URxvt.font:              xft:DejaVu Sans Mono:size=12, xft:Noto Color Emoji:size=12 */
 ! URxvt.font:              xft:Liberation Mono:size=12, xft:Noto Color Emoji:size=12

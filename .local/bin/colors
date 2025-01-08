@@ -1,0 +1,78 @@
+#!/bin/sh
+
+pc(){
+  printf "\\033[38;05;"${1}"m%-6s" "("$1") ";
+};
+
+for n in  0  1  2  3  4  5  6  7; do pc "$n"; done; printf '\n';
+for n in  8  9 10 11 12 13 14 15; do pc "$n"; done; printf '\n\n';
+
+step=6;
+start=16;
+i=0;
+while [ "$i" -le 5 ]; do
+  j=0;
+  while [ "$j" -le 11 ]; do
+    if [ "$j" -lt 6  ]; then
+      n="$(( $start + ( $j * $step ) + $i))";
+    else
+      n="$(( $start + ( ( 17 - $j ) * $step ) + $i))";
+    fi;
+    pc "$n";
+    j="$((j+1))";
+  done;
+  printf '\n';
+  i="$((i+1))";
+done;
+printf '\n';
+
+start='93';
+i=0;
+while [ "$i" -le 5 ]; do
+  j=0;
+  while [ "$j" -le 11 ]; do
+    if [ "$j" -lt 6  ]; then
+      n="$(( $start + ( $j * $step ) - $i))";
+    else
+      n="$(( $start + ( ( 17 - $j ) * $step ) - $i))";
+    fi;
+    pc "$n";
+    j="$((j+1))";
+  done;
+  printf '\n';
+  i="$((i+1))";
+done;
+printf '\n';
+
+start='160';
+i=0;
+while [ "$i" -le 5 ]; do
+  j=0;
+  while [ "$j" -le 11 ]; do
+    if [ "$j" -lt 6  ];
+    then
+      n="$(( $start + ( $j * $step ) + $i))";
+    else
+      n="$(( $start + ( ( 17 - $j ) * $step ) + $i))";
+    fi;
+    pc "$n";
+    j="$((j+1))";
+  done;
+  printf '\n';
+  i="$((i+1))";
+done;
+printf '\n';
+
+n=232;
+while [ "$n" -le 243 ]; do
+  pc "$n";
+  n="$((n+1))";
+done;
+printf '\n';
+
+n=255;
+while [ "$n" -le 244 ]; do
+  pc "$n";
+  n="$((n+1))";
+done;
+printf '\033[0m\n';
