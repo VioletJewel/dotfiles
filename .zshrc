@@ -153,20 +153,21 @@ function tmatt() {
 }
 
 # man + neovim = ♥
-function man(){
-  if ! [[ -t 0 && -t 1 && -t 2 ]]; then
-    command man "$@"
-    return
-  fi
-  if [ $# -eq 0 ]; then
-    echo 'What manual page do you want?'
-    return 0
-  elif ! man -d "$@" &> /dev/null; then
-    echo 'No manual entry for '"$*"
-    return 1
-  fi
-  nvim +"silent Man $*" +'silent only|set nomodifiable nomodified'
-}
+export MANPAGER='nvim +Man!'
+# function man(){
+#   if ! [[ -t 0 && -t 1 && -t 2 ]]; then
+#     command man "$@"
+#     return
+#   fi
+#   if [ $# -eq 0 ]; then
+#     echo 'What manual page do you want?'
+#     return 0
+#   elif ! man -d "$@" &> /dev/null; then
+#     echo 'No manual entry for '"$*"
+#     return 1
+#   fi
+#   nvim +"silent Man $*" +'silent only|set nomodifiable nomodified'
+# }
 
 function nvdiff(){
   if ! [[ -t 0 && -t 1 && -t 2 ]]; then
