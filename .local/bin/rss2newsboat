@@ -1,0 +1,19 @@
+#!/usr/bin/dash
+
+err(){
+  tty -s &&
+    1>&2 echo "$2" || {
+      xset -q >/dev/null 2&>1 && hash notify-send >/dev/null 2>&1 &&
+        notify-send "$0: $2"
+    };
+  exit "$1";
+}
+
+hash xsel && hash grep && hash curl && hash awk hash notify-send ||
+  err 1 'Fatal: please install all required programs: xsel, grep, curl, awk, notify-send';
+
+curl -s "$(xsel -bo)" | {
+  grep -oP "(?<=href=['\"])https?://[^'\"]+\\.rss\b[^'\"]*(?=['\"])" ||
+    err 2 "Fatal: '$(xsel -bo)' doesn't seem to have any RSS feeds"
+  } |
+  cat ~/.newsboat/urls - 2>/dev/null | awk '!a[$0]++' > ~/.newsboat/urls;
