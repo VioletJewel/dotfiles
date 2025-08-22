@@ -3,17 +3,51 @@
 err(){
   tty -s &&
     1>&2 echo "$2" || {
-      xset -q >/dev/null 2&>1 && hash notify-send >/dev/null 2>&1 &&
+      xset -q >/dev/null 2>&1 && hash notify-send >/dev/null 2>&1 &&
         notify-send "$0: $2"
     };
   exit "$1";
 }
 
 hash xsel && hash grep && hash curl && hash awk hash notify-send ||
-  err 1 'Fatal: please install all required programs: xsel, grep, curl, awk, notify-send';
+  err 1 'Fatal: install required programs: xsel, grep, curl, awk, notify-send';
 
-curl -s "$(xsel -bo)" | {
-  grep -oP "(?<=href=['\"])https?://[^'\"]+\\.rss\b[^'\"]*(?=['\"])" ||
-    err 2 "Fatal: '$(xsel -bo)' doesn't seem to have any RSS feeds"
-  } |
-  cat ~/.newsboat/urls - 2>/dev/null | awk '!a[$0]++' > ~/.newsboat/urls;
+(
+  url="$(xsel -bo)";
+  cat ~/.newsboat/urls 2>/dev/null;
+  case "$url" in
+
+  'https://www.youtube.com/@'*)
+    printf '%s "yt" "~YouTube @%s"\n' \
+      "$(curl -s "$url" | grep -oi 'https://www\.youtube\.com/feeds/videos\.xml?channel_id=[A-z0-9]\+' | head -n1)" \
+      "$(echo -n "$url" | sed -e 's/https:\/\/www\.youtube\.com\/@//')" ||
+        err 2 "Fatal: '$url' doesn't seem to have any RSS feeds";
+    break;;
+
+  'https://www.youtube.com/'*)
+    printf 'https://www.youtube.com/feeds/videos.xml?channel_id=%s "yt" "~YouTube %s"\n' \
+      $(curl -s "$url" | grep -Poi '(?<=.channelId":")[A-z0-9]+|(?<=url":"/)@[^"]+' | awk '!a[$0]++' | head -n2) ||
+        err 2 "Fatal '$url' doesn't seem to have any RSS feeds";
+    break;;
+
+  *'/feed'*|*'/rss'*)
+    echo "$url";
+    break;;
+
+  'http://'*|'https://'*)
+    curl -s "$url" |
+      grep -oP "(?<=href=['\"])https?://[^'\"]+(\\.rss\b|/rss\b|/feed\b)[^'\"]*(?=['\"])" ||
+      err 2 "Fatal: '$url' doesn't seem to have any RSS feeds";
+    break;;
+
+  *)
+    err 3 "Fatal: '$url' doesn't look like a URL";
+    break;
+
+  esac;
+) | awk '!a[$0]++' >/tmp/.newsboat.urls;
+
+mv /tmp/.newsboat.urls ~/.newsboat/urls 2>/dev/null;
+
+tty -s && echo 'done.' ||
+  { xset -q >/dev/null && hash notify-send >/dev/null 2>&1 && notify-send 'done.'; }
