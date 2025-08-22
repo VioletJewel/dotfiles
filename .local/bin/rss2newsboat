@@ -1,11 +1,9 @@
 #!/usr/bin/dash
 
+notif(){ xset -q >/dev/null 2>&1 && hash notify-send >/dev/null 2>&1 && notify-send "$1"; }
 err(){
   tty -s &&
-    1>&2 echo "$2" || {
-      xset -q >/dev/null 2>&1 && hash notify-send >/dev/null 2>&1 &&
-        notify-send "$0: $2"
-    };
+    1>&2 echo "$2" || notif "$0: $2"
   exit "$1";
 }
 
@@ -42,12 +40,10 @@ hash xsel && hash grep && hash curl && hash awk hash notify-send ||
 
   *)
     err 3 "Fatal: '$url' doesn't look like a URL";
-    break;
 
   esac;
 ) | awk '!a[$0]++' >/tmp/.newsboat.urls;
 
 mv /tmp/.newsboat.urls ~/.newsboat/urls 2>/dev/null;
 
-tty -s && echo 'done.' ||
-  { xset -q >/dev/null && hash notify-send >/dev/null 2>&1 && notify-send 'done.'; }
+tty -s && echo 'done.' || notif 'done.';
