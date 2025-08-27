@@ -15,26 +15,30 @@ hash xsel && hash grep && hash curl && hash awk hash notify-send ||
   cat ~/.newsboat/urls 2>/dev/null;
   case "$url" in
 
-  'https://www.youtube.com/@'*)
+  'https://www.youtube.com/@'*) # yt channel page => RSS for channel
     printf '%s "yt" "~YouTube @%s"\n' \
-      "$(curl -s "$url" | grep -oi 'https://www\.youtube\.com/feeds/videos\.xml?channel_id=[A-z0-9]\+' | head -n1)" \
+      "$(curl -s "$url" | grep -oi 'https://www\.youtube\.com/feeds/videos\.xml?channel_id=[^"/?]\+' | head -n1)" \
       "$(echo -n "$url" | sed -e 's/https:\/\/www\.youtube\.com\/@//')" ||
         err 2 "Fatal: '$url' doesn't seem to have any RSS feeds";
     break;;
 
-  'https://www.youtube.com/'*)
+  'https://www.youtube.com/'*) # yt video => RSS for channel
     printf 'https://www.youtube.com/feeds/videos.xml?channel_id=%s "yt" "~YouTube %s"\n' \
-      $(curl -s "$url" | grep -Poi '(?<=.channelId":")[A-z0-9]+|(?<=url":"/)@[^"]+' | awk '!a[$0]++' | head -n2) ||
+      $(curl -s "$url" | grep -Poi '(?<=.channelId":")[^"]+|(?<=url":"/)@[^"/?]+' | awk '!a[$0]++' | head -n2) ||
         err 2 "Fatal '$url' doesn't seem to have any RSS feeds";
     break;;
 
-  *'/feed'*|*'/rss'*)
+  'https://mastodon.social/@'*) # mastadon user/post => RSS for user
+    printf '%s.rss\n' "$(echo -n "$url" | sed 's/\(@[^/?.]\+\).*/\1/')";
+    break;;
+
+  *'/feed'*|*'/rss'*|*'.rss'*) # /feed /rss .rss => RSS
     echo "$url";
     break;;
 
-  'http://'*|'https://'*)
+  'http://'*|'https://'*) # other URL => scrape HTML for all RSS feeds
     curl -s "$url" |
-      grep -oP "(?<=href=['\"])https?://[^'\"]+(\\.rss\b|/rss\b|/feed\b)[^'\"]*(?=['\"])" ||
+      grep -oP "(?<=href=['\"])https?://[^'\"]+(\\.rss\b|/rss\b|/feeds\?\b)[^'\"]*(?=['\"])" ||
       err 2 "Fatal: '$url' doesn't seem to have any RSS feeds";
     break;;
 
